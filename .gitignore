@@ -1,0 +1,9 @@
+.venv
+__pycache__
+dist
+.DS_Store
+tries.py
+.vscode
+test-coverage-tool
+.coverage
+coverage.xml
