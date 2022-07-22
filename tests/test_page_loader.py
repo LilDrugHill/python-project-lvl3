@@ -3,17 +3,20 @@ import pytest
 from page_loader import download
 from page_loader.refactors import create_name_for_downloads, parse_resource_format
 import pook
-import re
 
 
-@pytest.mark.parametrize("site,reply,response", [("https://ru.hexlet.io/courses", 200, '/Users/lildrugdgugstyle/python-project-lvl3/tests/fixtures/some.html')])
-@pook.on
-def test_page_loader(site, reply, response):
-    with open(response) as fixture_html:
-        data = fixture_html.read()
-        mock = pook.get(
-            "https://ru.hexlet.io/courses", reply=reply, response_json=data
+@pytest.mark.parametrize(
+    "site,reply",
+    [
+        (
+            "https://ru.hexlet.io/courses",
+            200
         )
+    ],
+)
+@pook.on
+def test_page_loader(site, reply):
+    mock = pook.get("https://ru.hexlet.io/courses", reply=reply, response_json=1)
     with tempfile.TemporaryDirectory() as tmp_dir:
         html_file_path, _ = download(site, tmp_dir)
         assert mock.calls == 1
@@ -28,8 +31,10 @@ def test_page_loader(site, reply, response):
             create_name_for_downloads,
         ),
         (
-            "https://cdn2.hexlet.io/derivations/image/original/eyJpZCI6IjhlY2MwOTdjZGY2YzVjMDI2OTYwMDI2ZGRiYjQ4MjMwLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9",
-            "cdn2-hexlet-io-derivations-image-original-eyJpZCI6IjhlY2MwOTdjZGY2YzVjMDI2OTYwMDI2ZGRiYjQ4MjMwLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9",
+            "https://cdn2.hexlet.io/derivations/image/original/eyJpZCI6IjhlY2MwOTdjZGY2\
+YzVjMDI2OTYwMDI2ZGRiYjQ4MjMwLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9",
+            "cdn2-hexlet-io-derivations-image-original-eyJpZCI6IjhlY2Mw\
+OTdjZGY2YzVjMDI2OTYwMDI2ZGRiYjQ4MjMwLmpwZyIsInN0b3JhZ2UiOiJjYWNoZSJ9",
             parse_resource_format,
         ),
     ],

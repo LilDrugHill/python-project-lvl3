@@ -9,7 +9,9 @@ def create_resource_url(site_url: str, resource_link: str):
     resource_netloc = parsed_resource_url.netloc
     site_netloc = parsed_site_url.netloc
     if (
-        resource_netloc == site_netloc or resource_netloc == ""  # Проверяем путь относительный или ведет на дргой домен
+        resource_netloc == site_netloc
+        or resource_netloc
+        == ""  # Проверяем путь относительный или ведет на дргой домен
     ):
         if resource_netloc == "":
             return urljoin(site_url, parsed_resource_url.path)
@@ -53,7 +55,9 @@ def rename_if_exists(obj_path):
     return obj_path
 
 
-def parse_resource_format(resource_url: str) -> str:  # Сохранение формата скаченного img
+def parse_resource_format(
+    resource_url: str,
+) -> str:  # Сохранение формата скаченного img
     resource_format_obj = re.search(r"\.[a-z]{1,4}$", resource_url)
 
     if resource_format_obj is None:
