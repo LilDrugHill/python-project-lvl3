@@ -1,5 +1,3 @@
-import sys
-
 import requests
 from page_loader.refactors import (
     create_name_for_downloads,
@@ -159,6 +157,7 @@ def links_download(
                     link_path = os.path.join(
                         resources_dir_path, parse_resource_format(link_url)
                     )
+                    print(link_path)
                 except requests.exceptions.ConnectionError:
                     logging.warning(f"link {link_url} was not downloaded")
                 else:
@@ -167,6 +166,6 @@ def links_download(
 
                     create_relative_path(
                         link_tag, link_path, "href"
-                    )  # Подмена ссылки на путь до script
+                    )  # Подмена ссылки на путь до link
                     bar()
     logging.info("links downloaded")

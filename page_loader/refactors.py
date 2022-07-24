@@ -11,7 +11,7 @@ def create_resource_url(site_url: str, resource_link: str):
     if (
         resource_netloc == site_netloc
         or resource_netloc
-        == ""  # Проверяем путь относительный или ведет на дргой домен
+        == ""  # Проверяем путь относительный или ведет к другому домен
     ):
         if resource_netloc == "":
             return urljoin(site_url, parsed_resource_url.path)
@@ -29,7 +29,7 @@ def rename_if_exists(obj_path):
     if os.path.exists(obj_path):
         input_name = os.path.split(obj_path)[-1]
         file_sys_objs = os.listdir(os.path.dirname(obj_path))
-        file_format_obj = re.search(r"\.[a-z]{1,4}$", obj_path)
+        file_format_obj = re.search(r"\.[a-z]{3,4}$", obj_path)
 
         if file_format_obj:
             file_format = file_format_obj.group(0)
@@ -57,8 +57,8 @@ def rename_if_exists(obj_path):
 
 def parse_resource_format(
     resource_url: str,
-) -> str:  # Сохранение формата скаченного img
-    resource_format_obj = re.search(r"\.[a-z]{1,4}$", resource_url)
+) -> str:  # Сохранение формата скаченного ресурса
+    resource_format_obj = re.search(r"\.[a-z]{1,5}$", resource_url)
 
     if resource_format_obj is None:
         return create_name_for_downloads(resource_url)
@@ -66,7 +66,6 @@ def parse_resource_format(
     resource_format = resource_format_obj.group(0)
     url_without_format = resource_url.replace(resource_format, "")
     return create_name_for_downloads(url_without_format) + resource_format
-
 
 def create_name_for_downloads(site: str) -> str:
     url = urlparse(site)
