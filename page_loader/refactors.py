@@ -57,15 +57,17 @@ def rename_if_exists(obj_path):
 
 def parse_resource_format(
     resource_url: str,
+    save_format: str = ''
 ) -> str:  # Сохранение формата скаченного ресурса
     resource_format_obj = re.search(r"\.[a-z]{1,5}$", resource_url)
 
     if resource_format_obj is None:
-        return create_name_for_downloads(resource_url)
+        return create_name_for_downloads(resource_url) + save_format
 
     resource_format = resource_format_obj.group(0)
     url_without_format = resource_url.replace(resource_format, "")
     return create_name_for_downloads(url_without_format) + resource_format
+
 
 def create_name_for_downloads(site: str) -> str:
     url = urlparse(site)

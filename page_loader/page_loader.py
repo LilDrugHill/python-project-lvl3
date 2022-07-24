@@ -155,9 +155,9 @@ def links_download(
                 try:
                     link_resource = downloader.get(link_url)
                     link_path = os.path.join(
-                        resources_dir_path, parse_resource_format(link_url)
+                        resources_dir_path, parse_resource_format(link_url, '.html')
                     )
-                    print(link_path)
+
                 except requests.exceptions.ConnectionError:
                     logging.warning(f"link {link_url} was not downloaded")
                 else:
