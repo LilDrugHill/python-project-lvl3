@@ -79,7 +79,11 @@ def download(site_url: str, dir_path: str, downloader: classmethod = requests) -
     with open(html_file_path, "w+") as new_file:
         new_file.write(soup.prettify())
 
-    return html_file_path, resources_dir_path
+    print(
+        f"Your html here: {html_file_path}\nYour resources here: {resources_dir_path}"
+    )
+
+    return html_file_path
 
 
 def img_download(

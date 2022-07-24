@@ -18,7 +18,7 @@ import pook
 def test_page_loader(site, reply):
     mock = pook.get("https://ru.hexlet.io/courses", reply=reply, response_json=1)
     with tempfile.TemporaryDirectory() as tmp_dir:
-        html_file_path, _ = download(site, tmp_dir)
+        download(site, tmp_dir)
         assert mock.calls == 1
 
 
