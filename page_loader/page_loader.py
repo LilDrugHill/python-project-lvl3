@@ -52,13 +52,13 @@ def download(site_url: str, dir_path: str, downloader: classmethod = requests) -
         )
         os.rmdir(resources_dir_path)
         logging.info('resources dir was deleted')
-        sys.exit()
+        raise requests.exceptions.ConnectionError()
 
     except requests.exceptions.MissingSchema:
         logging.error(f"url '{site_url}' is invalid.")
         os.rmdir(resources_dir_path)
         logging.info('resources dir was deleted')
-        sys.exit()
+        raise requests.exceptions.MissingSchema()
 
     else:
         bar()
