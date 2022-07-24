@@ -33,12 +33,13 @@ def download(site_url: str, dir_path: str, downloader: classmethod = requests) -
             f"sorry you don't have permission to change directory {abs_dir_path}."
             f" Change permission or use another directory."
         )
-        sys.exit()
+        raise PermissionError()
+
     except FileNotFoundError:
         logging.error(
             f"sorry directory {abs_dir_path}is not exists. Check specified path."
         )
-        sys.exit()
+        raise FileNotFoundError()
 
     logging.info("resources dir was created")
 
