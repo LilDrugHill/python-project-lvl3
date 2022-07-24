@@ -61,6 +61,9 @@ def download(site_url: str, dir_path: str, downloader: classmethod = requests) -
         raise requests.exceptions.MissingSchema()
 
     else:
+        if not res:
+            raise requests.exceptions.ConnectionError(f'{res.status_code}')
+
         bar()
         soup = BeautifulSoup(res.text, features="html.parser")
 
