@@ -42,23 +42,11 @@ def download(site_url: str, dir_path: str, downloader: classmethod = requests) -
 
     logging.info("resources dir was created")
 
-    try:
-        with alive_bar(title="Downloading site(html)") as bar:
-            res = downloader.get(site_url)
+    with alive_bar(title="Downloading site(html)") as bar:
+        res = downloader.get(site_url)
 
-    except requests.exceptions.ConnectionError:
-        logging.error(
-            "failed to establish a new connection: nodename nor servname provided, or not known."
-        )
-        sys.exit()
-
-    except requests.exceptions.MissingSchema:
-        logging.error(f"url '{site_url}' is invalid.")
-        sys.exit()
-
-    else:
         bar()
-        soup = BeautifulSoup(res.text, features="html.parser")
+    soup = BeautifulSoup(res.text, features="html.parser")
 
     img_download(soup, resources_dir_path, site_url, downloader)  # Скачивает img
     scripts_download(
