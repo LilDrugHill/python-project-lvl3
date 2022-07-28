@@ -134,7 +134,7 @@ def scripts_download(
                     )
 
                     with open(script_path, "w+", encoding='utf-8') as script_file:
-                        script_file.write(script_resource.text)
+                        script_file.write(script_resource.content)
 
                     create_relative_path(
                         script_tag, script_path, "src"
