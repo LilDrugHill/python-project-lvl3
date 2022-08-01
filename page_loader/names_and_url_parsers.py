@@ -30,11 +30,7 @@ def rename_if_exists(obj_path):
         file_sys_objs = os.listdir(os.path.dirname(obj_path))
         file_format_obj = re.search(r"\.[a-z]{3,4}$", obj_path)
 
-        if file_format_obj:
-            file_format = file_format_obj.group(0)
-            obj_path = obj_path[:-len(file_format)]
-        else:
-            file_format = ""
+        file_format, obj_path = format_exist(file_format_obj, obj_path)
 
         input_name = os.path.split(obj_path)[-1]
 
@@ -62,6 +58,15 @@ def rename_if_exists(obj_path):
                 return obj_path + f"({x + 1})" + file_format
         return obj_path + f"({copy_num_list[-1] + 1})" + file_format
     return obj_path
+
+
+def format_exist(file_format_obj, obj_path):
+    if file_format_obj:
+        file_format = file_format_obj.group(0)
+        obj_path = obj_path[:-len(file_format)]
+    else:
+        file_format = ""
+    return file_format, obj_path
 
 
 def parse_resource_format(
