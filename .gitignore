@@ -8,3 +8,4 @@ test-coverage-tool
 .coverage
 coverage.xml
 .idea
+test_downloading
