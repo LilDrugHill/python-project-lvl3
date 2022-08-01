@@ -7,3 +7,4 @@ tries.py
 test-coverage-tool
 .coverage
 coverage.xml
+.idea
