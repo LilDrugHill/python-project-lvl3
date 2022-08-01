@@ -1,25 +1,22 @@
-import tempfile
+import os.path
 import pytest
 from page_loader import download
-from page_loader.refactors import create_name_for_downloads, parse_resource_format
-import pook
+from page_loader.names_and_url_parsers import create_name_for_downloads, parse_resource_format
+import requests_mock
+from tests import FIXTURES_PATH
 
 
 @pytest.mark.parametrize(
-    "site,reply",
-    [
-        (
-            "https://ru.hexlet.io/courses",
-            200
-        )
-    ],
+    "site,fixture_file",
+    [("http://fixture.com", "some.html")],
 )
-@pook.on
-def test_page_loader(site, reply):
-    mock = pook.get("https://ru.hexlet.io/courses", reply=reply, response_json=1)
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        download(site, tmp_dir)
-        assert mock.calls == 1
+def test_page_loader(site, fixture_file, tmp_path):
+    with requests_mock.Mocker() as mocker:
+        with open(os.path.join(FIXTURES_PATH, fixture_file)) as fixture:
+            mocker.get(site, text=fixture.read())
+            html_path = download(site, tmp_path)
+            assert len(list(tmp_path.iterdir())) == 2
+            assert os.path.isfile(html_path)
 
 
 @pytest.mark.parametrize(

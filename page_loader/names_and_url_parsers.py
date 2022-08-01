@@ -27,18 +27,27 @@ def create_relative_path(tag: str, path: str, attribute: str):
 
 def rename_if_exists(obj_path):
     if os.path.exists(obj_path):
-        input_name = os.path.split(obj_path)[-1]
         file_sys_objs = os.listdir(os.path.dirname(obj_path))
         file_format_obj = re.search(r"\.[a-z]{3,4}$", obj_path)
 
         if file_format_obj:
             file_format = file_format_obj.group(0)
+            obj_path = obj_path[:-len(file_format)]
         else:
             file_format = ""
 
+        input_name = os.path.split(obj_path)[-1]
+
         copy_num_list = []
         for file_sys_obj in file_sys_objs:
-            if input_name in file_sys_obj:
+            file_sys_format_obj = re.search(r"\.[a-z]{3,4}$", file_sys_obj)
+
+            if file_sys_format_obj:
+                file_sys_format = file_sys_format_obj.group(0)
+            else:
+                file_sys_format = ""
+
+            if input_name in file_sys_obj and file_sys_format == file_format:
                 copy_num_obj = re.search(r"\([0-9]{1,2}\)", file_sys_obj)
 
                 if copy_num_obj is not None:
@@ -56,8 +65,7 @@ def rename_if_exists(obj_path):
 
 
 def parse_resource_format(
-    resource_url: str,
-    save_format: str = ''
+    resource_url: str, save_format: str = ""
 ) -> str:  # Сохранение формата скаченного ресурса
     resource_format_obj = re.search(r"\.[a-z]{1,5}$", resource_url)
 
