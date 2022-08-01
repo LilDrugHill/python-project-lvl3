@@ -133,8 +133,8 @@ def scripts_download(
                         resources_dir_path, parse_resource_format(script_url)
                     )
 
-                    with open(script_path, "w+", encoding='utf-8') as script_file:
-                        script_file.write(script_resource.text)
+                    with open(script_path, "wb") as script_file:
+                        script_file.write(script_resource.content)
 
                     create_relative_path(
                         script_tag, script_path, "src"
@@ -161,8 +161,8 @@ def links_download(
                 except requests.exceptions.ConnectionError:
                     logging.warning(f"link {link_url} was not downloaded")
                 else:
-                    with open(link_path, "w+", encoding='utf-8') as link_file:
-                        link_file.write(link_resource.text)
+                    with open(link_path, "wb") as link_file:
+                        link_file.write(link_resource.content)
 
                     create_relative_path(
                         link_tag, link_path, "href"
