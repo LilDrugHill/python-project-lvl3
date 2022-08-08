@@ -1,13 +1,15 @@
 #!/usr/bin/env python
+import sys
+
 from page_loader.cli import parse
 from page_loader import download
 import logging
 import os
 
-logging.basicConfig(level=logging.INFO)
-
 
 def main():
+    logging.basicConfig(level=logging.INFO)
+
     args = parse()
 
     logging.info(f"requested url: {args.web}")
@@ -18,6 +20,8 @@ def main():
     except Exception as e:
         logging.error(e)
         raise
+    finally:
+        sys.exit()
 
 
 if __name__ == "__main__":
