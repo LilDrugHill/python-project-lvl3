@@ -68,16 +68,15 @@ def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: s
 def download_resource(resource_url: str, resources_dir_path: str):
     downloaded_obj = requests.get(resource_url)
 
-    try:
-        downloaded_obj.raise_for_status()
-    except Exception as e:
-        logging.warning(f"resource {resource_url} was not downloaded. {e}")
-    else:
-        resource_path = os.path.join(
-            resources_dir_path, save_resource_extension(resource_url)
-        )
+    downloaded_obj.raise_for_status()
 
-        with open(resource_path, "wb") as resource_file:
-            resource_file.write(downloaded_obj.content)
+    # logging.warning(f"resource {resource_url} was not downloaded. {e}")
+
+    resource_path = os.path.join(
+        resources_dir_path, save_resource_extension(resource_url)
+    )
+
+    with open(resource_path, "wb") as resource_file:
+        resource_file.write(downloaded_obj.content)
 
     return resource_path
