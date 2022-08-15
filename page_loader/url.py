@@ -17,11 +17,3 @@ def generate_common_path(site: str) -> str:
     netloc = url.netloc
     path = url.path
     return "-".join(re.split(r"[^a-z^A-Z^0-9]", netloc + path))
-
-
-def to_dir(site: str) -> str:
-    return generate_common_path(site) + "_files"
-
-
-def to_file(site: str) -> str:
-    return generate_common_path(site) + ".html"

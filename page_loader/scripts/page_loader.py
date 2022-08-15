@@ -20,6 +20,7 @@ def main():
     except Exception as e:
         logging.error(e)
         raise
+        sys.exit(1)
     finally:
         sys.exit()
 

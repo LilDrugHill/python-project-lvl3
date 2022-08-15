@@ -1,24 +1,19 @@
 import requests
 from page_loader.renamers import (
-    generate_common_path,
-    save_resource_extension,
+    create_name_for_saved,
 )
-
-# from page_loader import renamers
 from page_loader import url
 import os.path
 from bs4 import BeautifulSoup
 from alive_progress import alive_bar
 import logging
 
-logging.basicConfig(level=logging.INFO)
-
 
 def download(site_url: str, dir_path: str) -> str:
-    path_for_downloads = os.path.join(dir_path, generate_common_path(site_url))
 
-    resources_dir_path = path_for_downloads + "_files"
-    # resources_dir_path = renamers.if_exists(resources_dir_path)
+    resources_dir_path = create_name_for_saved(
+        dir_path, site_url, desired_extension="_files"
+    )
 
     with alive_bar(title="Downloading site(html)") as bar:
         downloaded_obj = requests.get(site_url)
@@ -32,8 +27,10 @@ def download(site_url: str, dir_path: str) -> str:
     logging.info("resources dir was created")
     download_resources(soup, resources_dir_path, site_url)
 
-    html_file_path = path_for_downloads + ".html"
-    # html_file_path = renamers.if_exists(html_file_path)
+    html_file_path = create_name_for_saved(
+        dir_path, site_url, desired_extension=".html"
+    )
+
     with open(html_file_path, "w+") as new_file:
         new_file.write(soup.prettify())
 
@@ -45,8 +42,8 @@ def download(site_url: str, dir_path: str) -> str:
 
 
 def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
-    tags_and_attributes_list = [("img", "src"), ("script", "src"), ("link", "href")]
-    for tag, attribute in tags_and_attributes_list:
+    tags_and_attributes = [("img", "src"), ("script", "src"), ("link", "href")]
+    for tag, attribute in tags_and_attributes:
         resource_tags = soup.find_all(tag)
         with alive_bar(title=f"Downloading {tag}s") as bar:
             for resource_tag in resource_tags:
@@ -72,9 +69,7 @@ def download_resource(resource_url: str, resources_dir_path: str):
 
     # logging.warning(f"resource {resource_url} was not downloaded. {e}")
 
-    resource_path = os.path.join(
-        resources_dir_path, save_resource_extension(resource_url)
-    )
+    resource_path = create_name_for_saved(resources_dir_path, resource_url)
 
     with open(resource_path, "wb") as resource_file:
         resource_file.write(downloaded_obj.content)
