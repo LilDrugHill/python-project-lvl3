@@ -19,10 +19,7 @@ def main():
         download(args.web, args.output)
     except Exception as e:
         logging.error(e)
-        raise
         sys.exit(1)
-    finally:
-        sys.exit()
 
 
 if __name__ == "__main__":
