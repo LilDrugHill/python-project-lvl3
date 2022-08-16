@@ -22,11 +22,6 @@ def download(site_url: str, dir_path: str) -> str:
 
     soup = BeautifulSoup(downloaded_obj.text, features="html.parser")
 
-    os.mkdir(resources_dir_path)
-
-    logging.info("resources dir was created")
-    download_resources(soup, resources_dir_path, site_url)
-
     html_file_path = create_name_for_saved(
         dir_path, site_url, desired_extension=".html"
     )
@@ -37,6 +32,15 @@ def download(site_url: str, dir_path: str) -> str:
     print(
         f"Your html here: {html_file_path}\nYour resources here: {resources_dir_path}"
     )
+
+    os.mkdir(resources_dir_path)
+
+    logging.info("resources dir was created")
+    download_resources(soup, resources_dir_path, site_url)
+
+
+
+
 
     return html_file_path
 
