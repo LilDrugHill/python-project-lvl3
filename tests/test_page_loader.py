@@ -5,41 +5,26 @@ import requests_mock
 from tests import FIXTURES_PATH
 
 
-@pytest.mark.parametrize(
-    "site,fixture_html,fixture_img,fixture_scr,fixture_link",
-    [
-        (
-            "http://fixture.com",
-            "some.html",
-            "some_img.png",
-            "some_script.js",
-            "some_link.css",
-        )
-    ],
+FIXTURES_AND_URLS_FOR_MOCKER = (
+    ("some_img.png", "https://fixture.com/assets/professions/nodejs.png"),
+    ("some_script.js", "https://fixture.com/packs/js/runtime.js"),
+    ("some_link.css", "https://fixture.com/assets/application.css"),
+    ("some_link.css", "https://fixture.com/courses"),
 )
-def test_page_loader(
-    site, fixture_html, fixture_img, fixture_scr, fixture_link, tmp_path
-):
+
+
+@pytest.mark.parametrize(
+    "site,fixture_html,fixtures_and_urls_for_assets",
+    [("http://fixture.com", "some.html", FIXTURES_AND_URLS_FOR_MOCKER)],
+)
+def test_page_loader(site, fixture_html, fixtures_and_urls_for_assets, tmp_path):
     with requests_mock.Mocker() as mocker:
         with open(os.path.join(FIXTURES_PATH, fixture_html)) as fixture:
             mocker.get(site, text=fixture.read())
 
-        with open(os.path.join(FIXTURES_PATH, fixture_link), "rb") as fixture:
-            mocker.get(
-                "https://fixture.com/assets/application.css", content=fixture.read()
-            )
-            mocker.get("https://fixture.com/courses", content=fixture.read())
-
-        with open(os.path.join(FIXTURES_PATH, fixture_scr), "rb") as fixture:
-            mocker.get(
-                "https://fixture.com/packs/js/runtime.js", content=fixture.read()
-            )
-
-        with open(os.path.join(FIXTURES_PATH, fixture_img), "rb") as fixture:
-            mocker.get(
-                "https://fixture.com/assets/professions/nodejs.png",
-                content=fixture.read(),
-            )
+        for fixture, url in fixtures_and_urls_for_assets:
+            with open(os.path.join(FIXTURES_PATH, fixture), "rb") as opened_fixture:
+                mocker.get(url, content=opened_fixture.read())
 
         html_path = download(site, tmp_path)
         dir_path = html_path[:-5] + "_files"
