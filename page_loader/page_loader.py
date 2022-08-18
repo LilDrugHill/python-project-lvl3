@@ -2,6 +2,7 @@ import requests
 from page_loader import url
 import os.path
 from bs4 import BeautifulSoup
+from progress.spinner import Spinner
 import logging
 
 
@@ -11,10 +12,10 @@ def download(site_url: str, dir_path: str) -> str:
         dir_path, url.to_name(site_url, desired_extension="_files")
     )
 
-    # with alive_bar(title="Downloading site(html)") as bar:
+    spinner = Spinner("Downloading site(html) ")
     downloaded_obj = requests.get(site_url)
     downloaded_obj.raise_for_status()
-    #  bar()
+    spinner.next()
 
     soup = BeautifulSoup(downloaded_obj.text, features="html.parser")
 
@@ -38,33 +39,33 @@ def download(site_url: str, dir_path: str) -> str:
 
 
 def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
-    tags_and_attributes = [("img", "src"), ("script", "src"), ("link", "href")]
-    for tag, attribute in tags_and_attributes:
+    tags_and_attributes = (("img", "src", ""), ("script", "src", ""), ("link", "href", ".html"))
+    for tag, attribute, desired_extension in tags_and_attributes:
         resource_tags = soup.find_all(tag)
-        # with alive_bar(title=f"Downloading {tag}s") as bar:
+        spinner = Spinner(f"Downloading {tag}s ")
         for resource_tag in resource_tags:
 
             if not (resource_link := resource_tag.get(attribute)):
                 continue
 
             if resource_url := url.for_resource(site_url, resource_link):
-                resource_path = download_resource(resource_url, resources_dir_path)
+                resource_path = download_resource(resource_url, resources_dir_path, desired_extension)
 
                 dir, file = os.path.split(resource_path)
                 _, dir = os.path.split(dir)
                 resource_tag[attribute] = os.path.join(dir, file)
 
-        #          bar()
+            spinner.next()
         logging.info(f"{tag}s downloaded")
 
 
-def download_resource(resource_url: str, resources_dir_path: str):
+def download_resource(resource_url: str, resources_dir_path: str, desired_extension: str):
     downloaded_obj = requests.get(resource_url)
 
     downloaded_obj.raise_for_status()
 
     resource_path = os.path.join(
-        resources_dir_path, url.to_name(resource_url)
+        resources_dir_path, url.to_name(resource_url, desired_extension)
     )
 
     with open(resource_path, "wb") as resource_file:
