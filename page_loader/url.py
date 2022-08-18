@@ -19,11 +19,14 @@ def generate_common_path(url: str) -> str:
     return "-".join(re.split(r"[^a-z^A-Z^0-9]", netloc + path))
 
 
-def to_name(resource_url: str, desired_extension: str = "") -> str:
+def to_name(resource_url: str, desired_extension: str = "", default_extension: str = "") -> str:
     found_extension_regex = re.search(r"\.[a-z]{1,5}$", resource_url)
 
-    if found_extension_regex is None or desired_extension:
+    if desired_extension:
         return generate_common_path(resource_url) + desired_extension
+
+    if found_extension_regex is None and default_extension:
+        return generate_common_path(resource_url) + default_extension
 
     resource_extension = found_extension_regex.group(0)
     url_without_extension = resource_url.replace(resource_extension, "")

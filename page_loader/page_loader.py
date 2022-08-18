@@ -39,8 +39,12 @@ def download(site_url: str, dir_path: str) -> str:
 
 
 def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
-    tags_and_attributes = (("img", "src", ""), ("script", "src", ""), ("link", "href", ".html"))
-    for tag, attribute, desired_extension in tags_and_attributes:
+    tags_and_attributes = (
+        ("img", "src", ""),
+        ("script", "src", ""),
+        ("link", "href", ".html"),
+    )
+    for tag, attribute, default_extension in tags_and_attributes:
         resource_tags = soup.find_all(tag)
         spinner = Spinner(f"Downloading {tag}s ")
         for resource_tag in resource_tags:
@@ -49,7 +53,9 @@ def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: s
                 continue
 
             if resource_url := url.for_resource(site_url, resource_link):
-                resource_path = download_resource(resource_url, resources_dir_path, desired_extension)
+                resource_path = download_resource(
+                    resource_url, resources_dir_path, default_extension
+                )
 
                 dir, file = os.path.split(resource_path)
                 _, dir = os.path.split(dir)
@@ -59,13 +65,15 @@ def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: s
         logging.info(f"{tag}s downloaded")
 
 
-def download_resource(resource_url: str, resources_dir_path: str, desired_extension: str):
+def download_resource(
+    resource_url: str, resources_dir_path: str, default_extension: str
+):
     downloaded_obj = requests.get(resource_url)
 
     downloaded_obj.raise_for_status()
 
     resource_path = os.path.join(
-        resources_dir_path, url.to_name(resource_url, desired_extension)
+        resources_dir_path, url.to_name(resource_url, default_extension=default_extension)
     )
 
     with open(resource_path, "wb") as resource_file:
