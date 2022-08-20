@@ -24,7 +24,7 @@ def download(site_url: str, dir_path: str) -> str:
     soup, assets = prepare_data_for_download(soup, resources_dir_path, site_url)
 
     download_and_save_resources(assets)
-    logging.info(f"resources downloaded")
+    logging.info("resources downloaded")
 
     html_file_path = os.path.join(
         dir_path, url.to_name(site_url, default_extension=".html")
@@ -40,7 +40,9 @@ def download(site_url: str, dir_path: str) -> str:
     return html_file_path
 
 
-def prepare_data_for_download(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
+def prepare_data_for_download(
+    soup: BeautifulSoup, resources_dir_path: str, site_url: str
+):
     tags_and_attributes = (
         ("img", "src", ""),
         ("script", "src", ""),
@@ -57,7 +59,8 @@ def prepare_data_for_download(soup: BeautifulSoup, resources_dir_path: str, site
 
             if resource_url := url.get_valid_resource(site_url, resource_link):
                 resource_path = os.path.join(
-                    resources_dir_path, url.to_name(resource_url, default_extension=default_extension)
+                    resources_dir_path,
+                    url.to_name(resource_url, default_extension=default_extension),
                 )
 
                 resources.append((resource_path, resource_url))
@@ -69,10 +72,8 @@ def prepare_data_for_download(soup: BeautifulSoup, resources_dir_path: str, site
     return soup.prettify(), resources
 
 
-def download_and_save_resources(
-        assets: list
-):
-    spinner = Spinner(f"Downloading resources ")
+def download_and_save_resources(assets: list):
+    spinner = Spinner("Downloading resources ")
     for resource_path, resource_url in assets:
 
         response = requests.get(resource_url)
