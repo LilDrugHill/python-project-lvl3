@@ -7,9 +7,8 @@ import logging
 
 
 def download(site_url: str, dir_path: str) -> str:
-
     resources_dir_path = os.path.join(
-        dir_path, url.to_name(site_url, desired_extension="_files")
+        dir_path, url.to_name(site_url, default_extension="_files")
     )
 
     spinner = Spinner("Downloading site(html) ")
@@ -22,14 +21,17 @@ def download(site_url: str, dir_path: str) -> str:
     os.mkdir(resources_dir_path)
 
     logging.info("resources dir was created")
-    download_resources(soup, resources_dir_path, site_url)
+    soup, assets = prepare_data_for_download(soup, resources_dir_path, site_url)
+
+    download_and_save_resources(assets)
+    logging.info(f"resources downloaded")
 
     html_file_path = os.path.join(
-        dir_path, url.to_name(site_url, desired_extension=".html")
+        dir_path, url.to_name(site_url, default_extension=".html")
     )
 
     with open(html_file_path, "w+") as new_file:
-        new_file.write(soup.prettify())
+        new_file.write(soup)
 
     print(
         f"Your html here: {html_file_path}\nYour resources here: {resources_dir_path}"
@@ -38,45 +40,46 @@ def download(site_url: str, dir_path: str) -> str:
     return html_file_path
 
 
-def download_resources(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
+def prepare_data_for_download(soup: BeautifulSoup, resources_dir_path: str, site_url: str):
     tags_and_attributes = (
         ("img", "src", ""),
         ("script", "src", ""),
         ("link", "href", ".html"),
     )
+    resources = []
     for tag, attribute, default_extension in tags_and_attributes:
         resource_tags = soup.find_all(tag)
-        spinner = Spinner(f"Downloading {tag}s ")
+        #
         for resource_tag in resource_tags:
 
             if not (resource_link := resource_tag.get(attribute)):
                 continue
 
-            if resource_url := url.for_resource(site_url, resource_link):
-                resource_path = download_resource(
-                    resource_url, resources_dir_path, default_extension
+            if resource_url := url.get_valid_resource(site_url, resource_link):
+                resource_path = os.path.join(
+                    resources_dir_path, url.to_name(resource_url, default_extension=default_extension)
                 )
+
+                resources.append((resource_path, resource_url))
 
                 dir, file = os.path.split(resource_path)
                 _, dir = os.path.split(dir)
                 resource_tag[attribute] = os.path.join(dir, file)
 
-            spinner.next()
-        logging.info(f"{tag}s downloaded")
+    return soup.prettify(), resources
 
 
-def download_resource(
-    resource_url: str, resources_dir_path: str, default_extension: str
+def download_and_save_resources(
+        assets: list
 ):
-    downloaded_obj = requests.get(resource_url)
+    spinner = Spinner(f"Downloading resources ")
+    for resource_path, resource_url in assets:
 
-    downloaded_obj.raise_for_status()
+        response = requests.get(resource_url)
 
-    resource_path = os.path.join(
-        resources_dir_path, url.to_name(resource_url, default_extension=default_extension)
-    )
+        response.raise_for_status()
 
-    with open(resource_path, "wb") as resource_file:
-        resource_file.write(downloaded_obj.content)
+        with open(resource_path, "wb") as resource_file:
+            resource_file.write(response.content)
 
-    return resource_path
+        spinner.next()

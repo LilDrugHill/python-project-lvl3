@@ -14,15 +14,15 @@ FIXTURES_AND_URLS_FOR_MOCKER = (
 
 
 @pytest.mark.parametrize(
-    "site,fixture_html,fixtures_and_urls_for_assets",
-    [("http://fixture.com", "some.html", FIXTURES_AND_URLS_FOR_MOCKER)],
+    "site,fixture_html",
+    [("http://fixture.com", "some.html")],
 )
-def test_page_loader(site, fixture_html, fixtures_and_urls_for_assets, tmp_path):
+def test_page_loader(site, fixture_html, tmp_path):
     with requests_mock.Mocker() as mocker:
         with open(os.path.join(FIXTURES_PATH, fixture_html)) as fixture:
             mocker.get(site, text=fixture.read())
 
-        for fixture, url in fixtures_and_urls_for_assets:
+        for fixture, url in FIXTURES_AND_URLS_FOR_MOCKER:
             with open(os.path.join(FIXTURES_PATH, fixture), "rb") as opened_fixture:
                 mocker.get(url, content=opened_fixture.read())
 

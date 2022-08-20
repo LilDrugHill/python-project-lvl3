@@ -2,7 +2,7 @@ from urllib.parse import urlparse, urljoin
 import re
 
 
-def for_resource(site_url: str, resource_link: str):
+def get_valid_resource(site_url: str, resource_link: str):
     parsed_resource_url = urlparse(resource_link)
     resource_netloc = parsed_resource_url.netloc
     if resource_netloc in site_url or resource_netloc == "":
@@ -19,11 +19,9 @@ def generate_common_path(url: str) -> str:
     return "-".join(re.split(r"[^a-z^A-Z^0-9]", netloc + path))
 
 
-def to_name(resource_url: str, desired_extension: str = "", default_extension: str = "") -> str:
-    found_extension_regex = re.search(r"\.[a-z]{1,5}$", resource_url)
-
-    if desired_extension:
-        return generate_common_path(resource_url) + desired_extension
+def to_name(resource_url: str, default_extension: str = "") -> str:
+    parsed_resource_url = urlparse(resource_url)
+    found_extension_regex = re.search(r"\.[a-z]{1,5}$", parsed_resource_url.path)
 
     if found_extension_regex is None and default_extension:
         return generate_common_path(resource_url) + default_extension
