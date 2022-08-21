@@ -5,5 +5,9 @@
 
 A training project created for downloading a website and opening it locally. Works like page caching in the browser.
 
-[![asciicast](https://asciinema.org/a/511970.svg)](https://asciinema.org/a/511970
-)
+[![asciicast](https://asciinema.org/a/511970.svg)](https://asciinema.org/a/511970)
+
+Install it: 
+    1.  Clone it in your system 
+    2.  Open it in terminal 
+    3.  Use command: python3 -m pip install --user dist/*.whl
