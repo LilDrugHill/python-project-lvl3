@@ -8,9 +8,5 @@ A training project created for downloading a website and opening it locally. Wor
 [![asciicast](https://asciinema.org/a/511970.svg)](https://asciinema.org/a/511970)
 
 Install it:
-
-1.  Clone it in your system 
-
-2.  Open it in terminal 
-
-3.  Use command: python3 -m pip install --user dist/*.whl
+python -m pip instal git+https://github.com/LilDrugHill/python-project-lvl3.git
+  
