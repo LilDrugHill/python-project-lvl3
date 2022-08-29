@@ -4,6 +4,7 @@ import os.path
 from bs4 import BeautifulSoup
 from progress.spinner import Spinner
 import logging
+import threading
 
 
 def download(site_url: str, dir_path: str) -> str:
@@ -74,13 +75,18 @@ def prepare_data_for_download(
 
 def download_and_save_resources(assets: list):
     spinner = Spinner("Downloading resources ")
+
     for resource_path, resource_url in assets:
-
-        response = requests.get(resource_url)
-
-        response.raise_for_status()
-
-        with open(resource_path, "wb") as resource_file:
-            resource_file.write(response.content)
-
+        t = threading.Thread(target=download_and_save_one, args=(resource_url, resource_path))
+        t.start()
         spinner.next()
+    t.join()
+
+
+def download_and_save_one(resource_url, resource_path):
+    response = requests.get(resource_url)
+
+    response.raise_for_status()
+
+    with open(resource_path, "wb") as resource_file:
+        resource_file.write(response.content)

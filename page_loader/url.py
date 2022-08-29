@@ -5,10 +5,13 @@ import re
 def get_valid_resource(site_url: str, resource_link: str):
     parsed_resource_url = urlparse(resource_link)
     resource_netloc = parsed_resource_url.netloc
-    if resource_netloc in site_url or resource_netloc == "":
-        if resource_netloc == "":
-            return urljoin(site_url, parsed_resource_url.path)
+
+    if resource_netloc == "":
+        return urljoin(site_url, parsed_resource_url.path)
+
+    if resource_netloc in site_url:
         return resource_link
+
     return None
 
 
